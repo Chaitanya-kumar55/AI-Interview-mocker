@@ -1,35 +1,59 @@
-import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
-import React from 'react'
+"use client";
 
-function InterviewItemCard({interview}) {
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
-    const router=useRouter();
+function InterviewItemCard({ interview }) {
+    const router = useRouter();
 
-    const onStart=()=>{
-        router.push('/dashboard/interview/'+interview?.mockid)
-    }
+    // Correctly refer to the `mockId` field (case-sensitive)
+    const onStart = () => {
+        if (!interview?.mockId) {
+            console.error('Mock ID is missing for Start button.');
+            return;
+        }
+        console.log('Start Button Clicked - Mock ID:', interview.mockId); // Debug
+        router.push(`/dashboard/interview/${interview.mockId}`);
+    };
 
-    const onfeedbackPress=()=>{
-        router.push('/dashboard/interview/'+interview.mockid+"/feedback")
-    }
-    
-  return (
-    <div className='border shadow-sm rounded-lg p-3'>
-        <h2 className='font-bold text-primary'>{interview?.jobPosition}</h2>
-        <h2 className='text-sm text-gray-600'>{interview?.jobExperience}Years of Experience</h2>
-        <h2 className='text-xs text-gray-400'>Created At:{interview.createdAt}</h2>
+    const onFeedbackPress = () => {
+        if (!interview?.mockId) {
+            console.error('Mock ID is missing for Feedback button.');
+            return;
+        }
+        console.log('Feedback Button Clicked - Mock ID:', interview.mockId); // Debug
+        router.push(`/dashboard/interview/${interview.mockId}/feedback`);
+    };
 
-        <div className='flex justify-between mt-2 gap-5'>
-            <Button size ="sm" variant="outline" className="w-full"
-            onClick={onfeedbackPress}
-            >Feedback</Button>
-            <Button size = "sm" className ="w-full"
-            onClick={onStart}
-            >Start</Button>
+    // Render component
+    return (
+        <div className="border shadow-sm rounded-lg p-3">
+            <h2 className="font-bold text-primary">{interview?.jobPosition || 'Unknown Position'}</h2>
+            <h2 className="text-sm text-gray-600">
+                {interview?.jobExperience
+                    ? `${interview.jobExperience} Years of Experience`
+                    : 'Experience not specified'}
+            </h2>
+            <h2 className="text-xs text-gray-400">
+                Created At: {interview?.createdAt || 'Date not available'}
+            </h2>
+
+            <div className="flex justify-between mt-2 gap-5">
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full"
+                    onClick={onFeedbackPress}
+                >
+                    Feedback
+                </Button>
+                <Button size="sm" className="w-full" onClick={onStart}>
+                    Start
+                </Button>
+            </div>
         </div>
-    </div>
-  )
+    );
 }
 
-export default InterviewItemCard
+export default InterviewItemCard;
